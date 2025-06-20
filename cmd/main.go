@@ -14,6 +14,7 @@ func main() {
 	}
 
 	r := gin.Default()
-
+	// r.POST("/shorten", handler.ShortenerURL)
+	// r.GET("/:code", handler.FinalUrl)
 	r.Run(":8080")
 }
