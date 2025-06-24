@@ -1,29 +1,15 @@
 package utils
 
 import (
-	"fmt"
-
-	"github.com/yeqown/go-qrcode/v2"
-	"github.com/yeqown/go-qrcode/writer/standard"
+	"github.com/skip2/go-qrcode"
 )
 
-func GenerateQRCode(url string) (string, error) {
-	qrc, err := qrcode.New(url)
+// GenerateQRCode generates a QR code for the given URL and returns it as a PNG byte slice.
+func GenerateQRCode(url string) ([]byte, error) {
+	// Generate the QR code with medium redundancy and 256x256 pixels.
+	png, err := qrcode.Encode(url, qrcode.Medium, 256)
 	if err != nil {
-		fmt.Printf("could not generate QRCode:%v", err)
-		return "", err
+		return nil, err
 	}
-	w, err := standard.New("qrcode.png")
-	if err != nil {
-		fmt.Printf("standar.New failed:%v", err)
-		return "", err
-	}
-
-	// save file
-	if err = qrc.Save(w); err != nil {
-		fmt.Printf("could not save image:%v", err)
-		return "", err
-	}
-
-	return "qrcode.png", nil
+	return png, nil
 }

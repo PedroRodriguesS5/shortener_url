@@ -21,6 +21,6 @@ func main() {
 
 	r.POST("/shorten", httpclientShortener.ShortenerURL)
 	r.GET("/:code", httpclientShortener.ResolveURL)
-	r.GET("/qrcode/:code", httpclientQrCode.QRCodeHandler)
+	r.GET("/qrcode", httpclientQrCode.QRCodeHandler)
 	r.Run(":8080")
 }
