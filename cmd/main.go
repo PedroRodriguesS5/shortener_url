@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -19,8 +21,15 @@ func main() {
 	db.InitRedis()
 	r := gin.Default()
 
+	// 1. Configure middleware
+	trustedProxies := strings.Split(os.Getenv("TRUSTED_PROXIES"), ",")
+	r.SetTrustedProxies(trustedProxies)
+
+	// 2. Register routes
 	r.POST("/shorten", httpclientShortener.ShortenerURL)
 	r.GET("/:code", httpclientShortener.ResolveURL)
 	r.GET("/qrcode", httpclientQrCode.QRCodeHandler)
-	r.Run(":8080")
+
+	// 3. Run the server
+	r.Run(os.Getenv("APP_HOST") + ":" + os.Getenv("APP_PORT"))
 }
