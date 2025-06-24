@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/pedrorodrigues5/shorter_url/model"
+	model "github.com/pedrorodrigues5/shorter_url/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pedrorodrigues5/shorter_url/internal/db"
