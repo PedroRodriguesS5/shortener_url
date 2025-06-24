@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/pedrorodrigues5/shorter_url/internal/db"
-	"github.com/pedrorodrigues5/shorter_url/internal/httpclient"
+	httpclientQrCode "github.com/pedrorodrigues5/shorter_url/internal/httpClient/qrCodeGenHandler"
+	httpclientShortener "github.com/pedrorodrigues5/shorter_url/internal/httpClient/shortenerUrlHandler"
 )
 
 func main() {
@@ -17,7 +18,9 @@ func main() {
 
 	db.InitRedis()
 	r := gin.Default()
-	r.POST("/shorten", httpclient.ShortenerURL)
-	r.GET("/:code", httpclient.ResolveURL)
+
+	r.POST("/shorten", httpclientShortener.ShortenerURL)
+	r.GET("/:code", httpclientShortener.ResolveURL)
+	r.GET("/qrcode/:code", httpclientQrCode.QRCodeHandler)
 	r.Run(":8080")
 }
