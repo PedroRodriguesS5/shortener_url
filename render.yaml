@@ -7,6 +7,10 @@ services:
   - type: redis
     name: redis-shortener
     plan: free # The 'free' plan is suitable for hobby projects.
+    # IP allow list is required. '0.0.0.0/0' allows connections from anywhere.
+    ipAllowList:
+      - value: 0.0.0.0/0
+        description: "Allow all IPs"
     maxmemoryPolicy: allkeys-lru # A good default policy for caching.
 
   # 2. The Go back-end application, deployed as a Docker container.
@@ -30,4 +34,4 @@ services:
         fromService:
           type: redis
           name: redis-shortener
-          property: internalConnectionString
+          property: connectionString
