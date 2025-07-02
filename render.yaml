@@ -28,6 +28,10 @@ services:
       - key: BASE_URL
         value: $RENDER_EXTERNAL_URL
         
+      # Mark this as production to skip loading .env file
+      - key: APP_ENV
+        value: production
+        
       # The connection string for the Redis service.
       # Your application should be configured to parse this full Redis URL.
       - key: REDIS_ADDR
