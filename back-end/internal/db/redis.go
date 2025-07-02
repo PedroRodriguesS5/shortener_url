@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -22,6 +23,23 @@ func InitRedis() {
 	if redisAddr == "" {
 		redisAddr = os.Getenv("REDIS_URL")
 	}
+
+	// Handle redis:// URL format from Render
+	// Extract only the host:port part
+	if strings.HasPrefix(redisAddr, "redis://") {
+		// Remove the redis:// prefix
+		redisAddr = strings.TrimPrefix(redisAddr, "redis://")
+		// Remove any path or query parameters (everything after a slash)
+		if slashIndex := strings.Index(redisAddr, "/"); slashIndex != -1 {
+			redisAddr = redisAddr[:slashIndex]
+		}
+		// Remove any auth info (username:password@)
+		if atIndex := strings.Index(redisAddr, "@"); atIndex != -1 {
+			redisAddr = redisAddr[atIndex+1:]
+		}
+	}
+
+	log.Printf("Connecting to Redis at: %s", redisAddr)
 
 	Rdb = redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
