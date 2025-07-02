@@ -15,8 +15,16 @@ var Rdb *redis.Client
 
 func InitRedis() {
 	db, _ := strconv.Atoi(os.Getenv("DB"))
+
+	// Check for REDIS_ADDR first (used in Render and docker-compose)
+	// Fall back to REDIS_URL if REDIS_ADDR is not set
+	redisAddr := os.Getenv("REDIS_ADDR")
+	if redisAddr == "" {
+		redisAddr = os.Getenv("REDIS_URL")
+	}
+
 	Rdb = redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_URL"),
+		Addr:     redisAddr,
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       db,
 	})
