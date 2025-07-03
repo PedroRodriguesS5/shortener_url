@@ -47,7 +47,7 @@ func ShortenerURL(c *gin.Context) {
 }
 
 func ResolveURL(c *gin.Context) {
-	code := c.Param("code")
+	code := c.Param("url")
 
 	url, err := db.GetURL(code)
 	if err != nil {
@@ -57,4 +57,20 @@ func ResolveURL(c *gin.Context) {
 
 	db.IncrementClick(code)
 	c.Redirect(http.StatusFound, url)
+}
+
+// GetURLClicks returns the number of clicks for a shortened URL
+func GetURLClicks(c *gin.Context) {
+	code := c.Param("code")
+
+	clicks, err := db.GetClicks(code)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "URL not found or no clicks recorded"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":   code,
+		"clicks": clicks,
+	})
 }

@@ -29,8 +29,9 @@ func main() {
 
 	// 2. Register routes
 	r.POST("/shorten", httpclientShortener.ShortenerURL)
-	r.GET("/:code", httpclientShortener.ResolveURL)
+	r.GET("/:url", httpclientShortener.ResolveURL)
 	r.GET("/qrcode", httpclientQrCode.QRCodeHandler)
+	r.GET("/stats/:code", httpclientShortener.GetURLClicks)
 
 	// 3. Run the server
 	r.Run(os.Getenv("APP_HOST") + ":" + os.Getenv("APP_PORT"))

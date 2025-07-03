@@ -65,6 +65,14 @@ func IncrementClick(code string) error {
 	return Rdb.Incr(Ctx, "clicks:"+code).Err()
 }
 
+func IncrementURLClick(fullURL string) error {
+	return Rdb.Incr(Ctx, "url_clicks:"+fullURL).Err()
+}
+
 func GetClicks(code string) (int64, error) {
 	return Rdb.Get(Ctx, "clicks:"+code).Int64()
+}
+
+func GetURLClicks(fullURL string) (int64, error) {
+	return Rdb.Get(Ctx, "url_clicks:"+fullURL).Int64()
 }
