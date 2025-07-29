@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Linker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+</head>
+<body>
+    <div class="container">
+        <div class="app-header">
+            <h1>Quick Linker</h1>
+            <p>Simplify your links, share with ease</p>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="url-input" placeholder="Enter your URL here" autocomplete="off" spellcheck="false">
+            <button id="action-btn">Generate</button>
+        </div>
+        
+        <div id="result-container" class="hidden">
+            <div class="result-card">
+                <div class="url-section">
+                    <h2>Your Shortened Link</h2>
+                    <a id="shortened-url" href="" target="_blank"></a>
+                </div>
+                
+                <div class="qr-section">
+                    <h2>QR Code</h2>
+                    <div id="qrcode-container">
+                        <img id="qrcode-img" crossOrigin="anonymous" src="" alt="QR Code">
+                    </div>
+                    <div class="actions">
+                        <button id="download-qr" class="action-btn">Download QR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
