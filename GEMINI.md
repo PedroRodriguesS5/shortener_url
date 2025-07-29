@@ -26,6 +26,10 @@ Has a rest api to shorten urls and a rest api to generate qr codes.
 ## Structure of the project
 quick_linker/
 ├── front-end/
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
+│   ├── dockerfile
 ├── back-end/
 │   ├── cmd/
 │   │   └── main.go

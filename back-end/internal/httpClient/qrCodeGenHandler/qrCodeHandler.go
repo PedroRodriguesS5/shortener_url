@@ -2,7 +2,7 @@ package httpclient
 
 import (
 	"net/http"
-	"regexp"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pedrorodrigues5/shorter_url/utils"
@@ -16,21 +16,26 @@ func QRCodeHandler(c *gin.Context) {
 		return
 	}
 
-	// Validate the URL using the provided regex.
-	// Note: The regex was corrected to escape the dot in `www.` to `www\.`
-	regexPattern := `^((([A-Za-z]{3,9}:(?://)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:/[+~%/\.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)$`
-	isValid, _ := regexp.MatchString(regexPattern, targetURL)
-	if !isValid {
+	decodedURL, err := url.QueryUnescape(targetURL)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL encoding"})
+		return
+	}
+
+	// Validate the URL.
+	_, err = url.ParseRequestURI(decodedURL)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL format provided"})
 		return
 	}
 
-	pngBytes, err := utils.GenerateQRCode(targetURL)
+	pngBytes, err := utils.GenerateQRCode(decodedURL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate QR code"})
 		return
 	}
 
 	// Return the QR code as a PNG image.
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.Data(http.StatusOK, "image/png", pngBytes)
 }
