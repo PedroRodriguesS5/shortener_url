@@ -40,8 +40,25 @@ func ShortenerURL(c *gin.Context) {
 		return
 	}
 
+	baseURL := os.Getenv("BASE_URL")
+	if baseURL == "" {
+		// Derive base URL from the incoming request when ENV var is not set.
+		scheme := "https"
+		if c.Request.TLS == nil {
+			scheme = "http"
+		}
+		// If behind a proxy (e.g., Render / Nginx) honour X-Forwarded-Proto header
+		if forwardedProto := c.Request.Header.Get("X-Forwarded-Proto"); forwardedProto != "" {
+			scheme = forwardedProto
+		}
+
+		host := c.Request.Host
+		baseURL = scheme + "://" + host
+	}
+	shortURL := baseURL + "/" + code
+
 	c.JSON(http.StatusOK, model.ShortenResponse{
-		ShortURL: os.Getenv("BASE_URL") + "/" + code,
+		ShortURL: shortURL,
 	})
 
 }
