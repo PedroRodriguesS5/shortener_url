@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -27,11 +28,12 @@ func main() {
 	// 1. Configure middleware
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins:  false,
-		AllowOrigins:     []string{"http://localhost:8080", "https://quick-linker.onrender.com"},
+		AllowOrigins:     []string{"https://quick-linker.netlify.app", "http://localhost:8080"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
 	trustedProxies := strings.Split(os.Getenv("TRUSTED_PROXIES"), ",")
 	r.SetTrustedProxies(trustedProxies)
