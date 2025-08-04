@@ -28,7 +28,7 @@ func main() {
 	// 1. Configure middleware
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins:  false,
-		AllowOrigins:     []string{"https://quick-linker.netlify.app", "http://localhost:8080"},
+		AllowOrigins:     []string{"http://localhost", "http://localhost:80", "http://localhost:3000", "http://localhost:5500", "http://localhost:8000", "https://quick-linker.netlify.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

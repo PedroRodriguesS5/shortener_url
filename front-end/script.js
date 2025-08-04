@@ -1,3 +1,5 @@
+const API_URL = 'https://quick-linker.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
     const actionBtn = document.getElementById('action-btn');
     const urlInput = document.getElementById('url-input');
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function fetchAndSetQrCode(url) {
             try {
-                const response = await fetch(`https://quick-linker.onrender.com/qrcode?url=${encodeURIComponent(url)}`);
+                const response = await fetch(`${API_URL}/qrcode?url=${encodeURIComponent(url)}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -49,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actionBtn.textContent = 'Processing...';
             actionBtn.classList.add('loading');
             
-            const response = await fetch('https://quick-linker.onrender.com/shorten', {
+            const response = await fetch(`${API_URL}/shorten`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
