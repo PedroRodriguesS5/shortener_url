@@ -5,13 +5,18 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - REDIS_ADDR=redis-12690.crce196.sa-east-1-2.ec2.redns.redis-cloud.com:12690
+      - REDIS_USERNAME=pedroxbrs584
+      - REDIS_PASSWORD=8LO/5&UhwR6Zm
+      - REDIS_DB=0
       - BASE_URL=http://localhost:8080
-      - REDIS_ADDR=redis:6379
     depends_on:
       - redis
   redis:
     image: redis:alpine
-    container_name: redis-shortener
+    container_name: redis
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data
 
