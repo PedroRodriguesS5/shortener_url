@@ -17,23 +17,16 @@ var Rdb *redis.Client
 func InitRedis() {
 	db, _ := strconv.Atoi(os.Getenv("DB"))
 
-	// Check for REDIS_ADDR first (used in Render and docker-compose)
-	// Fall back to REDIS_URL if REDIS_ADDR is not set
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
 		redisAddr = os.Getenv("REDIS_URL")
 	}
 
-	// Handle redis:// URL format from Render
-	// Extract only the host:port part
 	if strings.HasPrefix(redisAddr, "redis://") {
-		// Remove the redis:// prefix
 		redisAddr = strings.TrimPrefix(redisAddr, "redis://")
-		// Remove any path or query parameters (everything after a slash)
 		if slashIndex := strings.Index(redisAddr, "/"); slashIndex != -1 {
 			redisAddr = redisAddr[:slashIndex]
 		}
-		// Remove any auth info (username:password@)
 		if atIndex := strings.Index(redisAddr, "@"); atIndex != -1 {
 			redisAddr = redisAddr[atIndex+1:]
 		}
@@ -43,6 +36,7 @@ func InitRedis() {
 
 	Rdb = redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
+		Username: os.Getenv("REDIS_USERNAME"),
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       db,
 	})
