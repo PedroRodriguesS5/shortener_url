@@ -37,6 +37,46 @@
                 </div>
             </div>
         </div>
+        
+        <div class="metrics-section">
+            <button id="view-metrics" class="metrics-btn">View Metrics</button>
+        </div>
+        
+        <!-- Metrics Modal -->
+        <div id="metrics-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>URL Metrics Dashboard</h2>
+                    <button id="close-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="metrics-summary" class="metrics-summary">
+                        <div class="summary-card">
+                            <h3>Total URLs</h3>
+                            <span id="total-urls">0</span>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Clicks</h3>
+                            <span id="total-clicks">0</span>
+                        </div>
+                    </div>
+                    <div id="metrics-table-container">
+                        <table id="metrics-table">
+                            <thead>
+                                <tr>
+                                    <th>Short Code</th>
+                                    <th>Original URL</th>
+                                    <th>Clicks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-tbody">
+                                <!-- Metrics data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

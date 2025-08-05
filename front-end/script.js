@@ -1,5 +1,5 @@
 const API_URL = 'https://quick-linker.onrender.com';
-
+// https://quick-linker.onrender.com
 // Note: Shortened URL redirects are handled directly by the backend API
 // Users should access shortened URLs directly at the backend domain
 
@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrcodeImg = document.getElementById('qrcode-img');
     qrcodeImg.crossOrigin = 'anonymous';
     const downloadQrBtn = document.getElementById('download-qr');
+    const viewMetricsBtn = document.getElementById('view-metrics');
+    const metricsModal = document.getElementById('metrics-modal');
+    const closeModalBtn = document.getElementById('close-modal');
 
     urlInput.focus();
 
@@ -133,6 +136,85 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    viewMetricsBtn.addEventListener('click', showMetrics);
+    closeModalBtn.addEventListener('click', hideMetrics);
+    
+    // Close modal when clicking outside
+    metricsModal.addEventListener('click', function(e) {
+        if (e.target === metricsModal) {
+            hideMetrics();
+        }
+    });
+
+    async function showMetrics() {
+         try {
+             const response = await fetch(`${API_URL}/metrics`);
+             
+             if (!response.ok) {
+                 throw new Error('Failed to fetch metrics');
+             }
+
+             const data = await response.json();
+             displayMetrics(data);
+             metricsModal.classList.remove('hidden');
+         } catch (error) {
+             console.error('Error fetching metrics:', error);
+             showNotification('Failed to load metrics');
+         }
+     }
+
+     function hideMetrics() {
+         metricsModal.classList.add('hidden');
+     }
+
+     function displayMetrics(data) {
+         const totalUrlsElement = document.getElementById('total-urls');
+         const totalClicksElement = document.getElementById('total-clicks');
+         const tbody = document.getElementById('metrics-tbody');
+         
+         // Update summary cards
+         totalUrlsElement.textContent = data.total || 0;
+         
+         let totalClicks = 0;
+         if (data.metrics) {
+             Object.values(data.metrics).forEach(metric => {
+                 totalClicks += metric.clicks || 0;
+             });
+         }
+         totalClicksElement.textContent = totalClicks;
+         
+         // Clear existing table data
+         tbody.innerHTML = '';
+
+         if (!data.metrics || Object.keys(data.metrics).length === 0) {
+             const row = tbody.insertRow();
+             const cell = row.insertCell();
+             cell.colSpan = 3;
+             cell.textContent = 'No URLs have been shortened yet';
+             cell.style.textAlign = 'center';
+             cell.style.fontStyle = 'italic';
+             cell.style.color = 'var(--text-secondary)';
+             return;
+         }
+
+         // Populate table with metrics data
+         Object.entries(data.metrics).forEach(([shortCode, metric]) => {
+             const row = tbody.insertRow();
+             
+             const codeCell = row.insertCell();
+             codeCell.innerHTML = `<span class="code-cell">${shortCode}</span>`;
+             
+             const urlCell = row.insertCell();
+             urlCell.className = 'url-cell';
+             urlCell.textContent = metric.original_url;
+             urlCell.title = metric.original_url; // Show full URL on hover
+             
+             const clicksCell = row.insertCell();
+             clicksCell.className = 'clicks-cell';
+             clicksCell.textContent = metric.clicks || 0;
+         });
+     }
 
     downloadQrBtn.addEventListener('click', () => {
         if (!qrcodeImg.src || qrcodeImg.src === window.location.href) {
