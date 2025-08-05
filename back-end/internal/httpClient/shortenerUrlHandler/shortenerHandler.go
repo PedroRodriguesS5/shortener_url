@@ -91,3 +91,17 @@ func GetURLClicks(c *gin.Context) {
 		"clicks": clicks,
 	})
 }
+
+// GetAllMetrics returns all shortened URLs with their metrics
+func GetAllMetrics(c *gin.Context) {
+	metrics, err := db.GetAllURLs()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve metrics"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"metrics": metrics,
+		"total":   len(metrics),
+	})
+}
