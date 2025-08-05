@@ -15,31 +15,29 @@ var Ctx = context.Background()
 var Rdb *redis.Client
 
 func InitRedis() {
-	db, _ := strconv.Atoi(os.Getenv("DB"))
+	db, _ := strconv.Atoi(os.Getenv("REDIS_DB"))
 
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
 		redisAddr = os.Getenv("REDIS_URL")
 	}
 
+	// Handle full Redis connection string (production)
 	if strings.HasPrefix(redisAddr, "redis://") {
-		redisAddr = strings.TrimPrefix(redisAddr, "redis://")
-		if slashIndex := strings.Index(redisAddr, "/"); slashIndex != -1 {
-			redisAddr = redisAddr[:slashIndex]
+		opt, err := redis.ParseURL(redisAddr)
+		if err != nil {
+			log.Fatalf("error parsing Redis URL: %v", err)
 		}
-		if atIndex := strings.Index(redisAddr, "@"); atIndex != -1 {
-			redisAddr = redisAddr[atIndex+1:]
-		}
+		Rdb = redis.NewClient(opt)
+	} else {
+		log.Printf("Connecting to Redis at: %s", redisAddr)
+		Rdb = redis.NewClient(&redis.Options{
+			Addr:     redisAddr,
+			Username: os.Getenv("REDIS_USERNAME"),
+			Password: os.Getenv("REDIS_PASSWORD"),
+			DB:       db,
+		})
 	}
-
-	log.Printf("Connecting to Redis at: %s", redisAddr)
-
-	Rdb = redis.NewClient(&redis.Options{
-		Addr:     redisAddr,
-		Username: os.Getenv("REDIS_USERNAME"),
-		Password: os.Getenv("REDIS_PASSWORD"),
-		DB:       db,
-	})
 
 	_, err := Rdb.Ping(Ctx).Result()
 	if err != nil {
