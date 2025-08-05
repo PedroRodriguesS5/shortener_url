@@ -25,7 +25,7 @@ services:
     
     envVars:
       - key: BASE_URL
-        value: https://quick-linker.netlify.app
+        value: https://quick-linker.onrender.com
         
       # Mark this as production to skip loading .env file
       - key: APP_ENV
