@@ -24,9 +24,8 @@ services:
     dockerfilePath: ./back-end/dockerfile
     
     envVars:
-      # The public URL of this service, provided automatically by Render.
       - key: BASE_URL
-        value: $RENDER_EXTERNAL_URL
+        value: https://quick-linker.netlify.app
         
       # Mark this as production to skip loading .env file
       - key: APP_ENV

@@ -1,6 +1,59 @@
 const API_URL = 'https://quick-linker.onrender.com';
 
+// Handle shortened URL redirects
+function handleRedirect() {
+    const path = window.location.pathname;
+    if (path && path !== '/' && path.length > 1) {
+        const code = path.substring(1); // Remove leading slash
+        if (code && !code.includes('.')) { // Avoid redirecting for files like .css, .js
+            // Make API call to resolve the shortened URL
+            fetch(`${API_URL}/${code}`, {
+                method: 'GET',
+                redirect: 'manual' // Don't follow redirects automatically
+            })
+                .then(response => {
+                    if (response.status === 302 || response.status === 301) {
+                        // Get the redirect location and navigate to it
+                        const redirectUrl = response.headers.get('Location');
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        } else {
+                            showNotification('Invalid redirect response');
+                            setTimeout(() => {
+                                window.history.replaceState({}, '', '/');
+                            }, 2000);
+                        }
+                    } else if (response.status === 404) {
+                        showNotification('Link not found or expired');
+                        // Redirect to home page after showing error
+                        setTimeout(() => {
+                            window.history.replaceState({}, '', '/');
+                        }, 2000);
+                    } else {
+                        showNotification('Unexpected response from server');
+                        setTimeout(() => {
+                            window.history.replaceState({}, '', '/');
+                        }, 2000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resolving shortened URL:', error);
+                    showNotification('Error resolving link');
+                    setTimeout(() => {
+                        window.history.replaceState({}, '', '/');
+                    }, 2000);
+                });
+            return true; // Indicates we're handling a redirect
+        }
+    }
+    return false; // Not a redirect URL
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if this is a shortened URL redirect
+    if (handleRedirect()) {
+        return; // Exit early if handling redirect
+    }
     const actionBtn = document.getElementById('action-btn');
     const urlInput = document.getElementById('url-input');
     const resultContainer = document.getElementById('result-container');
