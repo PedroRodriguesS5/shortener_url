@@ -68,3 +68,40 @@ func GetClicks(code string) (int64, error) {
 func GetURLClicks(fullURL string) (int64, error) {
 	return Rdb.Get(Ctx, "url_clicks:"+fullURL).Int64()
 }
+
+// GetAllURLs returns all shortened URLs with their original URLs and click counts
+func GetAllURLs() (map[string]map[string]interface{}, error) {
+	result := make(map[string]map[string]interface{})
+
+	// Get all keys that are not click counters
+	keys, err := Rdb.Keys(Ctx, "*").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, key := range keys {
+		// Skip click counter keys
+		if strings.HasPrefix(key, "clicks:") || strings.HasPrefix(key, "url_clicks:") {
+			continue
+		}
+
+		// Get the original URL
+		originalURL, err := Rdb.Get(Ctx, key).Result()
+		if err != nil {
+			continue // Skip if error getting URL
+		}
+
+		// Get click count (default to 0 if not found)
+		clicks, err := Rdb.Get(Ctx, "clicks:"+key).Int64()
+		if err != nil {
+			clicks = 0
+		}
+
+		result[key] = map[string]interface{}{
+			"original_url": originalURL,
+			"clicks":       clicks,
+		}
+	}
+
+	return result, nil
+}
