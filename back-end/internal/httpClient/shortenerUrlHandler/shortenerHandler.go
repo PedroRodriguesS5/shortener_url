@@ -30,10 +30,7 @@ func ShortenerURL(c *gin.Context) {
 		return
 	}
 
-	expiry := req.ExpiresIn
-	if expiry == 0 {
-		expiry = 3600 * 24 * 7
-	}
+	expiry := 24 * 60 * 60
 
 	if err := db.SaveURL(code, req.URL, expiry); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save the url"})
