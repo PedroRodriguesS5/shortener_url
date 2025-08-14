@@ -14,9 +14,18 @@ func TestRedis(t *testing.T) {
 	}
 	defer s.Close()
 
-	os.Setenv("REDIS_URL", s.Addr())
-	os.Setenv("REDIS_PASSWORD", "")
-	os.Setenv("DB", "0")
+	err = os.Setenv("REDIS_URL", s.Addr())
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when setting env var REDIS_URL", err)
+	}
+	err = os.Setenv("REDIS_PASSWORD", "")
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when setting env var REDIS_PASSWORD", err)
+	}
+	err = os.Setenv("DB", "0")
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when setting env var DB", err)
+	}
 
 	InitRedis()
 

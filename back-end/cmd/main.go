@@ -36,7 +36,10 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 	trustedProxies := strings.Split(os.Getenv("TRUSTED_PROXIES"), ",")
-	r.SetTrustedProxies(trustedProxies)
+	err := r.SetTrustedProxies(trustedProxies)
+	if err != nil {
+		log.Printf("error to load the trusted proxies: %v\n", err.Error())
+	}
 
 	// 2. Register routes
 	r.POST("/shorten", httpclientShortener.ShortenerURL)
@@ -46,5 +49,9 @@ func main() {
 	r.GET("/:url", httpclientShortener.ResolveURL)
 
 	// 3. Run the server
-	r.Run(os.Getenv("APP_HOST") + ":" + os.Getenv("APP_PORT"))
+	err = r.Run(os.Getenv("APP_HOST") + ":" + os.Getenv("APP_PORT"))
+
+	if err != nil {
+		log.Printf("error to start the server: %v\n", err.Error())
+	}
 }
